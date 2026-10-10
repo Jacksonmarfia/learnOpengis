@@ -1,0 +1,56 @@
+# high-pass filter using pixel notation
+import os, sys, numpy, time
+from osgeo import gdal
+from osgeo.gdalconst import *
+
+start = time.time()
+
+os.chdir('**************')
+
+# register all of the GDAL drivers
+gdal.AllRegister()
+
+# open the image
+inDs = gdal.Open('******', GA_ReadOnly)
+if inDs is None:
+  print 'Could not open *******'
+  sys.exit(1)
+
+# get image size
+rows = inDs.RasterYSize
+cols = inDs.RasterXSize
+
+# read the input data
+inBand = inDs.GetRasterBand(1)
+
+# do the calculation
+# 1. define the input dataset especially the format for reading 
+# 2. define the output dataset
+# 3. iterate pixles/slices to calcaulte new values
+
+
+
+
+# create the output image
+driver = inDs.GetDriver()
+outDs = driver.Create('****', cols, rows, 1, GDT_Float32)
+if outDs is None:
+  print 'Could not create ******'
+  sys.exit(1)
+outBand = outDs.GetRasterBand(1)
+
+# write the output data
+outBand.WriteArray(outData, 0, 0)
+
+# flush data to disk, set the NoData value and calculate stats
+outBand.FlushCache()
+stats = outBand.GetStatistics(0, 1)
+
+# georeference the image and set the projection
+outDs.SetGeoTransform(inDs.GetGeoTransform())
+outDs.SetProjection(inDs.GetProjection())
+
+inDs = None
+outDs = None
+
+print time.time() - start, 'seconds'
